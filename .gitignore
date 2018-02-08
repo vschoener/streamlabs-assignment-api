@@ -1,0 +1,7 @@
+/node_modules
+/src/config/*.js
+!/src/config/loader.js
+!/src/config/test.js
+
+# Docker
+docker-compose.override.yml
