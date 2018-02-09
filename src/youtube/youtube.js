@@ -14,7 +14,18 @@ module.exports = (apiKey) => {
                     order: 'viewCount'
                 }
             }).then((response) => {
-                return response.data.items;
+                let result = [];
+
+                response.data.items.forEach((element) => {
+                    result.push({
+                        videoId: element.id.videoId,
+                        channelId: element.snippet.channelId,
+                        title: element.snippet.title,
+                        description: element.snippet.description,
+                        publishedAt: element.snippet.publishedAt,
+                    });
+                });
+                return result;
             });
         },
         fetchLiveVideoAnalytic: (videoId) => {
@@ -41,14 +52,15 @@ module.exports = (apiKey) => {
                 params: {
                     key: apiKey,
                     liveChatId,
-                    part: 'snippet'
+                    part: 'snippet,authorDetails'
                 }
             }).then(response => {
                 let messages = [];
 
                 response.data.items.forEach(item => {
                     messages.push({
-                        author: item.snippet.liveChatId,
+                        author: item.authorDetails.displayName,
+                        channelUrl: item.authorDetails.channelUrl,
                         publishedAt: item.snippet.publishedAt,
                         displayMessage: item.snippet.displayMessage
                     });
