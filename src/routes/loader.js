@@ -1,4 +1,4 @@
-module.exports = (env) => {
+module.exports = (env, config) => {
     const app = require('express')();
     const bodyParser = require('body-parser');
     const morgan = require('morgan');
@@ -11,18 +11,20 @@ module.exports = (env) => {
         return res.json({message: 'Welcome to the Youtube API'});
     });
 
+    app.use('/youtube', require('./youtube')(config.apiKey));
+
     // Error handler
     app.use((req, res, next) => {
-        const error = new Error('Resource not found');
-        // Maybe a better way to handle this ?
-        error.status = 404;
+        const error = {
+            message: new Error('Resource not found'),
+            status: 404
+        };
         next(error);
     });
     
     app.use((err, req, res, next) => {
-        // log err.stack
-        res.status(err.status || 500);
         return res
+            .status(err.status || 500)
             .json({ error: { message: err.message } })
             .end();
     });
